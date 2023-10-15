@@ -53,17 +53,23 @@ function DerangementSim() {
     setIsDeranged(isDerangement(elements, newShuffledElements));
     
     setSprings(index => {
-      const newProps = getSpringProps(newShuffledElements.indexOf(elements[index]));
+      // Getting the original position of the marble.
+      const fromProps = getSpringProps(index);
+      
+      // Getting the new position after shuffle.
+      const toProps = getSpringProps(newShuffledElements.indexOf(elements[index]));
+
       return {
         to: async (next) => {
-          await next({ ...newProps, transform: 'scale(1)' });
+          // Animating to the new position.
+          await next({ ...toProps, transform: 'scale(1)' });
         },
-        from: { ...newProps, transform: 'scale(1.1)' },
+        from: { ...fromProps, transform: 'scale(1.1)' },
         config: { tension: 170, friction: 12, mass: 1 },
         reset: true,
       };
     });
-  };
+};
   
 
   useEffect(() => {
@@ -114,7 +120,8 @@ function DerangementSim() {
         key={shuffledElements[index]}
         style={{
           ...props,
-      
+          position: 'absolute',
+
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
@@ -129,7 +136,15 @@ function DerangementSim() {
         </animated.div>
       ))}
         </Box>
-      {isDeranged ? <p>This is a Derangement</p> : <p>This is not a Derangement</p>}
+        {isDeranged ? (
+      <Typography variant="h5" sx={{ color: 'red', fontWeight: 'bold' }}>
+            This is a Derangement
+          </Typography>
+      ) : (
+          <Typography variant="h5" sx={{ color: 'green', fontWeight: 'bold' }}>
+            This is not a Derangement
+          </Typography>
+      )}
       </header>
       
     </div>
